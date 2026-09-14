@@ -2,14 +2,14 @@
 #include "cyf/log.h"
 #include "cyf/ring_buffer.h"
 
-// Global ring buffer: capacity = 8 (power of two, stores max 7 elements)
+// Global ring buffer: buffer_size = 8 (power of two, stores max 7 elements)
 static cyf::RingBuffer<uint8_t, 8> g_ring_buffer;
 
 void setup() {
   Serial.begin(115200);
 
   CLOGI("=== RingBuffer Basic Demo ===");
-  CLOGI("Buffer size: %u, Usable capacity: %u", g_ring_buffer.buffer_size(), g_ring_buffer.capacity());
+  CLOGI("Buffer max size: %u", g_ring_buffer.max_size());
 
   // ----------------------------------------------------------
   // 1. Write & Read basic
@@ -19,7 +19,7 @@ void setup() {
   uint8_t write_data[] = {10, 20, 30, 40};
   size_t written = g_ring_buffer.Write(write_data, 4);
   CLOGI("Wrote %u elements: {10, 20, 30, 40}", written);
-  CLOGI("count=%u, free=%u, empty=%d, full=%d", g_ring_buffer.count(), g_ring_buffer.free_space(), g_ring_buffer.empty(),
+  CLOGI("count=%u, free=%u, empty=%d, full=%d", g_ring_buffer.count(), g_ring_buffer.free(), g_ring_buffer.empty(),
         g_ring_buffer.full());
 
   uint8_t read_buf[4] = {0};
@@ -33,9 +33,9 @@ void setup() {
   // ----------------------------------------------------------
   CLOGI("\n--- 2. Fill to Full (no overwrite) ---");
 
-  g_ring_buffer.Clear();  // reset to empty
+  g_ring_buffer.Reset();  // reset to empty
 
-  // Fill all 7 usable slots (capacity = 7 for N=8)
+  // Fill all 7 usable slots (max_size = 7 for N=8)
   uint8_t fill_data[7] = {1, 2, 3, 4, 5, 6, 7};
   written = g_ring_buffer.Write(fill_data, 7);
   CLOGI("Filled %u elements", written);
@@ -51,7 +51,7 @@ void setup() {
   // ----------------------------------------------------------
   CLOGI("\n--- 3. Overwrite Mode ---");
 
-  g_ring_buffer.Clear();
+  g_ring_buffer.Reset();
   uint8_t init_data[] = {1, 2, 3};
   g_ring_buffer.Write(init_data, 3);
   CLOGI("Before overwrite: count=%u, front=%u", g_ring_buffer.count(), g_ring_buffer.front());
@@ -62,7 +62,7 @@ void setup() {
   CLOGI("After writing 4,5 (no eviction): count=%u", g_ring_buffer.count());
 
   // Now fill to full then overwrite — oldest gets dropped
-  g_ring_buffer.Clear();
+  g_ring_buffer.Reset();
   uint8_t seq[] = {10, 20, 30, 40, 50, 60, 70};
   g_ring_buffer.Write(seq, 7);                         // fill all 7 slots
   g_ring_buffer.Write(&extra, 1, /*overwrite=*/true);  // evicts 10, keeps 20..99
@@ -75,7 +75,7 @@ void setup() {
   // ----------------------------------------------------------
   CLOGI("\n--- 4. Peek (non-destructive read) ---");
 
-  g_ring_buffer.Clear();
+  g_ring_buffer.Reset();
   uint8_t pd[] = {100, 101, 102};
   g_ring_buffer.Write(pd, 3);
 
@@ -97,34 +97,34 @@ void setup() {
   CLOGI("Element at index 1: %u", g_ring_buffer[1]);
 
   // ----------------------------------------------------------
-  // 6. Advance — manually move read pointer (useful for DMA)
+  // 6. Consume — manually move read pointer (useful for DMA)
   // ----------------------------------------------------------
-  CLOGI("\n--- 6. Advance (DMA-style) ---");
+  CLOGI("\n--- 6. Consume (DMA-style) ---");
 
-  CLOGI("Before Advance(2): count=%u, front=%u", g_ring_buffer.count(), g_ring_buffer.front());
-  g_ring_buffer.Advance(2);  // consume 2 elements without copying
-  CLOGI("After Advance(2):  count=%u, front=%u", g_ring_buffer.count(), g_ring_buffer.front());
+  CLOGI("Before Consume(2): count=%u, front=%u", g_ring_buffer.count(), g_ring_buffer.front());
+  g_ring_buffer.Consume(2);  // consume 2 elements without copying
+  CLOGI("After Consume(2):  count=%u, front=%u", g_ring_buffer.count(), g_ring_buffer.front());
 
   // ----------------------------------------------------------
   // 7. Read() — single element, convenience method
   // ----------------------------------------------------------
   CLOGI("\n--- 7. Read() Single Element ---");
 
-  g_ring_buffer.Clear();
+  g_ring_buffer.Reset();
   g_ring_buffer.Write(seq, 3);  // {10, 20, 30}
   uint8_t val = g_ring_buffer.Read();
   CLOGI("Read() returned: %u, remaining count=%u", val, g_ring_buffer.count());
 
   // ----------------------------------------------------------
-  // 8. External buffer usage via RingBufferView
+  // 8. External buffer usage via RingBufferCore
   // ----------------------------------------------------------
-  CLOGI("\n--- 8. RingBufferView (external buffer) ---");
+  CLOGI("\n--- 8. RingBufferCore (external buffer) ---");
 
   uint8_t ext_buf[16];  // 16 bytes, power of two
-  cyf::RingBufferView<uint8_t> view(ext_buf, 16);
+  cyf::RingBufferCore<uint8_t> rb(ext_buf, 16);
 
-  view.Write(init_data, 3);
-  CLOGI("View: wrote 3 elements, count=%u, capacity=%u", view.count(), view.capacity());
+  rb.Write(init_data, 3);
+  CLOGI("Core: wrote 3 elements, count=%u, max_size=%u", rb.count(), rb.max_size());
 
   CLOGI("\n=== Demo Complete ===");
 }
