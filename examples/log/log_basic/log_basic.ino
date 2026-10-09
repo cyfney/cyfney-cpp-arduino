@@ -1,5 +1,4 @@
-#include "cyf.h"  // must be included first
-#include "cyf/log.h"
+#include "cyf.h"
 
 void setup() {
   Serial.begin(115200);

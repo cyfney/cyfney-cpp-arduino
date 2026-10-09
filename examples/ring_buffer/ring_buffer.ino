@@ -1,6 +1,8 @@
-#include "cyf.h"  // must be included first
-#include "cyf/log.h"
-#include "cyf/ring_buffer.h"
+#include "cyf.h"
+
+#ifdef ARDUINO_ARCH_AVR
+#error "AVR is not supported"
+#endif
 
 // Global ring buffer: buffer_size = 8 (power of two, stores max 7 elements)
 static cyf::RingBuffer<uint8_t, 8> g_ring_buffer;

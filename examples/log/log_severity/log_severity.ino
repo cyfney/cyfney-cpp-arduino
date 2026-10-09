@@ -15,15 +15,14 @@
 // IMPORTANT: #define MUST appear BEFORE any #include of cyf.h or cyf/log.h
 // =============================================================================
 
-#include "cyf.h"  // must be included first (after macro definition)
-
 // --- Choose one severity level below ---
 #define CYF_LOG_SEVERITY CYF_LOG_SEVERITY_DEBUG
 // #define CYF_LOG_SEVERITY CYF_LOG_SEVERITY_VERBOSE
 // #define CYF_LOG_SEVERITY CYF_LOG_SEVERITY_INFO
 // #define CYF_LOG_SEVERITY CYF_LOG_SEVERITY_WARN
 // #define CYF_LOG_SEVERITY CYF_LOG_SEVERITY_NONE
-#include "cyf/log.h"
+
+#include "cyf.h"
 
 void setup() {
   Serial.begin(115200);

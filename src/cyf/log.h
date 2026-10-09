@@ -70,7 +70,7 @@ inline void set_log_sink(LogSink sink) noexcept {
 
 inline size_t& format_buffer_size() noexcept {
 #if defined(ARDUINO_ARCH_AVR)
-  static size_t s_format_buffer_size = 128;  // Default buffer size
+  static size_t s_format_buffer_size = 256;  // Default buffer size
 #else
   static size_t s_format_buffer_size = 512;  // Default buffer size
 #endif
