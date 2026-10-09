@@ -16,9 +16,11 @@ class RingBufferCore {
 
  public:
   constexpr explicit RingBufferCore(T* buffer, size_t buffer_size) noexcept : buffer_(buffer), max_size_(buffer_size - 1) {
+#if defined(__cplusplus) && __cplusplus >= 202002L
     assert(buffer != nullptr);
     assert(buffer_size >= 4);
     assert((buffer_size & (buffer_size - 1)) == 0);  // buffer_size must be a power of two
+#endif
   }
 
   size_t Write(const T& data, bool overwrite = false) noexcept { return Write(&data, 1, overwrite); }
