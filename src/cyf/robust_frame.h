@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef CYF_ROBUST_FRAME_H_
+#define CYF_ROBUST_FRAME_H_
+
 #include <Stream.h>
 #include <assert.h>
 #include <stddef.h>
@@ -177,3 +180,4 @@ class Parser {
 
 }  // namespace robust_frame
 }  // namespace cyf
+#endif

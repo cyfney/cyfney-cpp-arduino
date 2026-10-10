@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef CYF_RING_BUFFER_H
-#define CYF_RING_BUFFER_H
+#ifndef CYF_RING_BUFFER_H_
+#define CYF_RING_BUFFER_H_
 
 #include <algorithm>
 #include <cassert>

@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef CYF_LOG_H
-#define CYF_LOG_H
+#ifndef CYF_LOG_H_
+#define CYF_LOG_H_
 
 #define CYF_LOG_SEVERITY_VERBOSE (1)
 #define CYF_LOG_SEVERITY_DEBUG (2)

@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef CYF_BUFFER_VIEW_H_
+#define CYF_BUFFER_VIEW_H_
+
 #include <Print.h>
 #include <stdint.h>
 
@@ -16,3 +19,4 @@ class BufferView {
   const size_t length_;
 };
 }  // namespace cyf
+#endif

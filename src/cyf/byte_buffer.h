@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef BYTE_BUFFER_H
-#define BYTE_BUFFER_H
+#ifndef CYF_BYTE_BUFFER_H_
+#define CYF_BYTE_BUFFER_H_
 
 #include <Print.h>
 #include <stddef.h>
