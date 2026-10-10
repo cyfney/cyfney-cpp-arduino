@@ -78,14 +78,14 @@ inline void Serialize(const uint8_t* data, size_t length, Stream& stream) noexce
 inline ByteBuffer Serialize(const uint8_t* data, size_t length) noexcept {
   using namespace detail;
   ByteBuffer buffer(MaxSerializedLength(length));
-  size_t buffer_length = 0;
+  size_t offset = 0;
   const uint8_t crc = crc8::Calculate(data, length);
 
-  buffer[buffer_length++] = kFrameHeader;
-  Escape(data, length, buffer.data(), &buffer_length);
-  Escape(&crc, 1, buffer.data(), &buffer_length);
-  buffer[buffer_length++] = kFrameFooter;
-  buffer.set_length(buffer_length);
+  buffer[offset++] = kFrameHeader;
+  Escape(data, length, buffer.data(), &offset);
+  Escape(&crc, 1, buffer.data(), &offset);
+  buffer[offset++] = kFrameFooter;
+  buffer.Resize(offset);
   return buffer;
 }
 

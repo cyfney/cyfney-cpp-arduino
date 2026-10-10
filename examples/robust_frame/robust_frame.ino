@@ -37,7 +37,7 @@ void loop() {
   size_t index = 0;
   bool got_decoded_data = false;
 
-  for (; index < buffer.length(); index++) {
+  for (; index < buffer.size(); index++) {
     auto decoded_data = g_parser.Process(buffer[index]);
 
     if (decoded_data.data() != nullptr) {
@@ -60,7 +60,7 @@ void loop() {
     }
   }
 
-  if (index != buffer.length()) {
+  if (index != buffer.size()) {
     CLOGE("Error: incomplete frame");
     while (true);
   }

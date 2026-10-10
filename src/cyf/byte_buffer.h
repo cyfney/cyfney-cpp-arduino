@@ -4,49 +4,63 @@
 #define CYF_BYTE_BUFFER_H_
 
 #include <Print.h>
+#include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 namespace cyf {
 class ByteBuffer {
  public:
-  explicit ByteBuffer(size_t capacity) noexcept : data_(new uint8_t[capacity]), capacity_(capacity), length_(0) {}
-  ~ByteBuffer() noexcept { delete[] data_; }
-  ByteBuffer(ByteBuffer&& other) noexcept : data_(other.data_), capacity_(other.capacity_), length_(other.length_) {
-    other.data_ = nullptr;
-    other.capacity_ = 0;
-    other.length_ = 0;
+  explicit ByteBuffer(size_t size) noexcept : buffer_(reinterpret_cast<uint8_t*>(malloc(size))), size_(size) {
+    assert(buffer_ != nullptr);
+  }
+
+  ~ByteBuffer() noexcept {
+    if (buffer_ != nullptr) {
+      free(buffer_);
+    }
+  }
+
+  ByteBuffer(ByteBuffer&& other) noexcept : buffer_(other.buffer_), size_(other.size_) {
+    other.buffer_ = nullptr;
+    other.size_ = 0;
   }
 
   ByteBuffer& operator=(ByteBuffer&& other) noexcept {
     if (this != &other) {
-      delete[] data_;
-      data_ = other.data_;
-      capacity_ = other.capacity_;
-      length_ = other.length_;
-      other.data_ = nullptr;
+      if (buffer_ != nullptr) {
+        free(buffer_);
+      }
+      buffer_ = other.buffer_;
+      size_ = other.size_;
+      other.buffer_ = nullptr;
+      other.size_ = 0;
     }
     return *this;
   }
 
-  bool empty() const noexcept { return length_ == 0; }
-  void clear() noexcept { length_ = 0; }
-  uint8_t* data() noexcept { return data_; }
-  const uint8_t* data() const noexcept { return data_; }
-  size_t capacity() const noexcept { return capacity_; }
-  size_t length() const noexcept { return length_; }
-  void set_length(size_t length) noexcept { length_ = length; }
-  size_t WriteTo(Print& print) const noexcept { return print.write(data_, length_); }
-  const uint8_t& operator[](size_t pos) const noexcept { return *(data_ + pos); }
-  uint8_t& operator[](size_t pos) noexcept { return *(data_ + pos); }
+  void Resize(size_t size) {
+    buffer_ = reinterpret_cast<uint8_t*>(realloc(buffer_, size));
+    assert(buffer_ != nullptr);
+    size_ = size;
+  }
+
+  uint8_t* buffer() noexcept { return buffer_; }
+  const uint8_t* buffer() const noexcept { return buffer_; }
+  uint8_t* data() noexcept { return buffer_; }
+  const uint8_t* data() const noexcept { return buffer_; }
+  size_t size() const noexcept { return size_; }
+  size_t WriteTo(Print& print) const noexcept { return print.write(buffer_, size_); }
+  const uint8_t& operator[](size_t pos) const noexcept { return *(buffer_ + pos); }
+  uint8_t& operator[](size_t pos) noexcept { return *(buffer_ + pos); }
 
  private:
   ByteBuffer(const ByteBuffer&) = delete;
   ByteBuffer& operator=(const ByteBuffer&) = delete;
 
-  uint8_t* data_ = nullptr;
-  size_t capacity_ = 0;
-  size_t length_ = 0;
+  uint8_t* buffer_ = nullptr;
+  size_t size_ = 0;
 };
 }  // namespace cyf
 #endif
