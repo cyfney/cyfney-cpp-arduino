@@ -1,4 +1,6 @@
-#include "cyf.h"
+#include "cyf.h"  // Triggers Arduino IDE to locate cyfney-cpp and add src/ to include path, making "cyf/xxx.h" includes below resolvable
+#include "cyf/log.h"
+#include "cyf/ring_buffer.h"
 
 #ifdef ARDUINO_ARCH_AVR
 #error "AVR is not supported"

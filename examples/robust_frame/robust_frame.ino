@@ -1,4 +1,6 @@
-#include "cyf.h"
+#include "cyf.h"  // Triggers Arduino IDE to locate cyfney-cpp and add src/ to include path, making "cyf/xxx.h" includes below resolvable
+#include "cyf/log.h"
+#include "cyf/robust_frame.h"
 
 namespace {
 constexpr size_t kMaxPayloadSize = 20;
@@ -18,7 +20,7 @@ void loop() {
 
   const size_t data_length = random(1, kMaxPayloadSize);
   CLOGI("data length: %u", data_length);
-  uint8_t data[data_length];
+  uint8_t data[data_length] = {0};
   {
     String data_str;
     for (size_t i = 0; i < data_length; ++i) {

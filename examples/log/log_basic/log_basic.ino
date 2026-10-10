@@ -1,4 +1,5 @@
-#include "cyf.h"
+#include "cyf.h"  // Triggers Arduino IDE to locate cyfney-cpp and add src/ to include path, making "cyf/xxx.h" includes below resolvable
+#include "cyf/log.h"
 
 void setup() {
   Serial.begin(115200);
