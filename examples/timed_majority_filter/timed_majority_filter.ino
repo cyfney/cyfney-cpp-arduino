@@ -3,14 +3,10 @@
 #include "cyf/timed_majority_filter.h"
 
 namespace {
-struct MillisTime {
-  uint32_t operator()() const { return millis(); }
-};
-
 constexpr uint32_t kWindowMs = 2000;
 constexpr uint16_t kMinCount = 5;
 
-cyf::TimedMajorityFilter<uint8_t, uint32_t, MillisTime> g_filter(kWindowMs, MillisTime(), kMinCount);
+cyf::TimedMajorityFilter<uint8_t, uint32_t, uint32_t (*)()> g_filter(kWindowMs, millis, kMinCount);
 
 uint8_t g_true_state = 0;
 }  // namespace
@@ -37,7 +33,7 @@ void loop() {
   }
 
   uint8_t decision = 0;
-  if (g_filter.Flush(decision)) {
+  if (g_filter.Flush(&decision)) {
     CLOGI("majority decision: %u (true state: %u)", decision, g_true_state);
   }
 
