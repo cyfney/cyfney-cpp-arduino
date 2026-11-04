@@ -4,7 +4,7 @@
 
 namespace {
 constexpr size_t kMaxPayloadSize = 20;
-cyf::robust_frame::Parser g_parser(kMaxPayloadSize);
+cyf::robust_frame::Decoder<kMaxPayloadSize> g_decoder;
 }  // namespace
 
 void setup() {
@@ -33,12 +33,16 @@ void loop() {
     CLOGI("data: %s", data_str.c_str());
   }
 
-  auto buffer = cyf::robust_frame::Serialize(data, data_length);
+  auto frame = cyf::robust_frame::Encode<kMaxPayloadSize>(data, data_length);
+  if (frame.size() == 0) {
+    CLOGE("Error: encode failed");
+    while (true);
+  }
   size_t index = 0;
   bool got_decoded_data = false;
 
-  for (; index < buffer.size(); index++) {
-    auto decoded_data = g_parser.Process(buffer[index]);
+  for (; index < frame.size(); index++) {
+    auto decoded_data = g_decoder.Decode(frame[index]);
 
     if (decoded_data.data() != nullptr) {
       if (got_decoded_data) {
@@ -60,7 +64,7 @@ void loop() {
     }
   }
 
-  if (index != buffer.size()) {
+  if (index != frame.size()) {
     CLOGE("Error: incomplete frame");
     while (true);
   }
