@@ -3,10 +3,13 @@
 #ifndef CYF_ROBUST_FRAME_H_
 #define CYF_ROBUST_FRAME_H_
 
-#include <Stream.h>
 #include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
+
+#if defined(ARDUINO)
+#include <Stream.h>
+#endif
 
 #include "buffer_view.h"
 #include "byte_buffer.h"
@@ -46,6 +49,7 @@ inline void Escape(const uint8_t* data, size_t data_length, uint8_t* buffer, siz
   }
 }
 
+#if defined(ARDUINO)
 inline void Escape(const uint8_t* data, size_t data_length, Stream& stream) {
   for (size_t i = 0; i < data_length; ++i) {
     if (data[i] == kFrameHeader || data[i] == kFrameFooter || data[i] == kEscapeChar) {
@@ -56,6 +60,7 @@ inline void Escape(const uint8_t* data, size_t data_length, Stream& stream) {
     }
   }
 }
+#endif
 
 inline size_t MaxSerializedLength(size_t data_length) noexcept {
   return 1                    // header
@@ -66,6 +71,7 @@ inline size_t MaxSerializedLength(size_t data_length) noexcept {
 }
 }  // namespace detail
 
+#if defined(ARDUINO)
 inline void Serialize(const uint8_t* data, size_t length, Stream& stream) noexcept {
   using namespace detail;
   const uint8_t crc = crc8::Calculate(data, length);
@@ -74,6 +80,7 @@ inline void Serialize(const uint8_t* data, size_t length, Stream& stream) noexce
   Escape(&crc, 1, stream);
   stream.write(kFrameFooter);
 }
+#endif
 
 inline ByteBuffer Serialize(const uint8_t* data, size_t length) noexcept {
   using namespace detail;
