@@ -80,7 +80,7 @@ inline T Read(TwoWire& wire, uint8_t dev_addr, uint8_t addr) {
  * @param value The value to write.
  */
 template <typename T>
-inline void Write(TwoWire& wire, uint8_t dev_addr, uint8_t addr, T& value) {
+inline void Write(TwoWire& wire, uint8_t dev_addr, uint8_t addr, T&& value) {
   Write(wire, dev_addr, addr, reinterpret_cast<const uint8_t*>(&value), sizeof(T));
 }
 }  // namespace i2c
