@@ -2,10 +2,6 @@
 #include "cyf/fifo.h"
 #include "cyf/log.h"
 
-#ifdef ARDUINO_ARCH_AVR
-#error "AVR is not supported"
-#endif
-
 // Global FIFO: buffer_size = 8 (power of two, stores max 7 elements)
 static cyf::Fifo<uint8_t, 8> g_fifo;
 
