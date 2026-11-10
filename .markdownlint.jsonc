@@ -1,0 +1,5 @@
+{
+  // Prose (especially CJK text) and fenced code are not wrapped to a hard
+  // column limit in this project.
+  "MD013": false
+}
