@@ -20,7 +20,7 @@ src/<头文件路径>.h  →  docs/<头文件路径去 .h>/<模块名>.md       
 | 头文件 | 英文文档 | 中文文档 | 状态 |
 | ------ | -------- | -------- | ---- |
 | `src/cyf.h` | `docs/cyf/cyf.md` | `docs/cyf/cyf.zh-CN.md` | 待写（库版本常量，内容少，可与 README 合并说明，定稿时再定） |
-| `src/cyf/array.h` | `docs/cyf/array/array.md` | `docs/cyf/array/array.zh-CN.md` | 待写 |
+| `src/cyf/array.h` | `docs/cyf/array/array.md` | `docs/cyf/array/array.zh-CN.md` | ✅ 已完成 |
 | `src/cyf/buffer_view.h` | `docs/cyf/buffer_view/buffer_view.md` | `docs/cyf/buffer_view/buffer_view.zh-CN.md` | 待写 |
 | `src/cyf/byte_buffer.h` | `docs/cyf/byte_buffer/byte_buffer.md` | `docs/cyf/byte_buffer/byte_buffer.zh-CN.md` | 待写 |
 | `src/cyf/crc8.h` | `docs/cyf/crc8/crc8.md` | `docs/cyf/crc8/crc8.zh-CN.md` | 待写 |
