@@ -38,6 +38,8 @@ inline void Read(TwoWire& wire, uint8_t dev_addr, uint8_t addr, uint8_t* data, s
   }
 }
 
+inline void Read(uint8_t dev_addr, uint8_t addr, uint8_t* data, size_t length) { Read(Wire, dev_addr, addr, data, length); }
+
 /**
  * @brief Writes raw bytes to the I2C device at the specified register/memory address.
  *
@@ -52,6 +54,10 @@ inline void Write(TwoWire& wire, uint8_t dev_addr, uint8_t addr, const uint8_t* 
   wire.write(addr);
   wire.write(data, length);
   internal::Check(wire.endTransmission() == 0);
+}
+
+inline void Write(uint8_t dev_addr, uint8_t addr, const uint8_t* data, size_t length) {
+  Write(Wire, dev_addr, addr, data, length);
 }
 
 /**
@@ -70,6 +76,13 @@ inline T Read(TwoWire& wire, uint8_t dev_addr, uint8_t addr) {
   return value;
 }
 
+template <typename T>
+inline T Read(uint8_t dev_addr, uint8_t addr) {
+  T value{};
+  Read(Wire, dev_addr, addr, reinterpret_cast<uint8_t*>(&value), sizeof(T));
+  return value;
+}
+
 /**
  * @brief Writes a value of type T to the I2C device at the specified register/memory address.
  *
@@ -82,6 +95,11 @@ inline T Read(TwoWire& wire, uint8_t dev_addr, uint8_t addr) {
 template <typename T>
 inline void Write(TwoWire& wire, uint8_t dev_addr, uint8_t addr, T&& value) {
   Write(wire, dev_addr, addr, reinterpret_cast<const uint8_t*>(&value), sizeof(T));
+}
+
+template <typename T>
+inline void Write(uint8_t dev_addr, uint8_t addr, T&& value) {
+  Write(Wire, dev_addr, addr, reinterpret_cast<const uint8_t*>(&value), sizeof(T));
 }
 }  // namespace i2c
 }  // namespace cyf
