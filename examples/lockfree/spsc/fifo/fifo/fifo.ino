@@ -1,6 +1,7 @@
 // Basic demo of the lock-free SPSC FIFO (single task, API walkthrough).
 //
-// Demonstrates Push/Pop (single + block), front(), empty() and Clear().
+// Demonstrates Push/Pop (single + block), front(), empty(), DiscardAll() and
+// ConsumeAll(f).
 // Push never blocks and never overwrites: when the FIFO is full it returns
 // false (or pushes fewer elements for the block form). This demo exercises
 // the API from one task; for a two-core concurrency stress test see the
@@ -59,7 +60,7 @@ void setup() {
   // ----------------------------------------------------------
   CLOGI("\n--- 3. Full behavior ---");
 
-  g_fifo.Clear();
+  g_fifo.DiscardAll();
   for (uint8_t i = 1; i <= 7; ++i) {
     g_fifo.Push(i);  // fill the whole usable capacity
   }
@@ -72,12 +73,25 @@ void setup() {
   CLOGI("front() still %u (nothing was dropped)", (unsigned)g_fifo.front());
 
   // ----------------------------------------------------------
-  // 4. Clear — drop everything (consumer side)
+  // 4. DiscardAll — drop everything (consumer side)
   // ----------------------------------------------------------
-  CLOGI("\n--- 4. Clear ---");
+  CLOGI("\n--- 4. DiscardAll ---");
 
-  g_fifo.Clear();
-  CLOGI("Clear() -> empty()=%d", g_fifo.empty());
+  g_fifo.DiscardAll();
+  CLOGI("DiscardAll() -> empty()=%d", g_fifo.empty());
+
+  // ----------------------------------------------------------
+  // 5. ConsumeAll(f) — visit every remaining element, then drop them
+  // ----------------------------------------------------------
+  CLOGI("\n--- 5. ConsumeAll ---");
+
+  for (uint8_t i = 1; i <= 3; ++i) {
+    g_fifo.Push(i);
+  }
+  uint16_t sum = 0;
+  const size_t visited = g_fifo.ConsumeAll([&sum](uint8_t& v) { sum += v; });
+  CLOGI("ConsumeAll() visited %u elements, sum=%u, empty()=%d", (unsigned)visited, (unsigned)sum,
+        g_fifo.empty());
 
   CLOGI("\n=== Demo Complete ===");
 }

@@ -127,6 +127,19 @@ void setup() {
   rb.Push(init_data, 3);
   CLOGI("Core: pushed 3 elements, count=%u, max_size=%u", rb.count(), rb.max_size());
 
+  // ----------------------------------------------------------
+  // 9. ConsumeAll(f) — visit every remaining element, then drop them
+  // ----------------------------------------------------------
+  CLOGI("\n--- 9. ConsumeAll ---");
+
+  g_fifo.Clear();
+  uint8_t burst[] = {1, 2, 3, 4};
+  g_fifo.Push(burst, 4);
+
+  uint16_t sum = 0;
+  size_t visited = g_fifo.ConsumeAll([&sum](uint8_t& v) { sum += v; });
+  CLOGI("ConsumeAll() visited %u elements, sum=%u, count=%u", visited, sum, g_fifo.count());
+
   CLOGI("\n=== Demo Complete ===");
 }
 
