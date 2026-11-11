@@ -33,7 +33,7 @@ void loop() {
   }
 
   uint8_t decision = 0;
-  if (g_filter.Flush(&decision)) {
+  if (g_filter.Flush(decision)) {
     CLOGI("majority decision: %u (true state: %u)", decision, g_true_state);
   }
 
