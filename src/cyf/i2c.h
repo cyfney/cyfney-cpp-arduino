@@ -90,15 +90,17 @@ inline T Read(uint8_t dev_addr, uint8_t addr) {
  * @param wire The TwoWire instance.
  * @param dev_addr The 7-bit I2C device address.
  * @param addr The 8-bit register/memory address to write to.
- * @param value The value to write.
+ * @param value The value to write. Passed by value so that `static constexpr`
+ *              members and other constants are accepted without ODR-use
+ *              (they must not be required to have an out-of-line definition).
  */
 template <typename T>
-inline void Write(TwoWire& wire, uint8_t dev_addr, uint8_t addr, T&& value) {
+inline void Write(TwoWire& wire, uint8_t dev_addr, uint8_t addr, T value) {
   Write(wire, dev_addr, addr, reinterpret_cast<const uint8_t*>(&value), sizeof(T));
 }
 
 template <typename T>
-inline void Write(uint8_t dev_addr, uint8_t addr, T&& value) {
+inline void Write(uint8_t dev_addr, uint8_t addr, T value) {
   Write(Wire, dev_addr, addr, reinterpret_cast<const uint8_t*>(&value), sizeof(T));
 }
 }  // namespace i2c
