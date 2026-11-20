@@ -40,6 +40,10 @@ inline void Read(TwoWire& wire, uint8_t i2c_address, uint16_t addr, uint8_t* dat
   }
 }
 
+inline void Read(uint8_t i2c_address, uint16_t addr, uint8_t* data, size_t length) {
+  Read(Wire, i2c_address, addr, data, length);
+}
+
 /**
  * @brief Writes raw bytes to the I2C device at the specified 16-bit register/memory address.
  *
@@ -55,6 +59,10 @@ inline void Write(TwoWire& wire, uint8_t i2c_address, uint16_t addr, const uint8
   wire.write(static_cast<uint8_t>(addr & 0xFF));
   wire.write(data, length);
   internal::Check(wire.endTransmission() == 0);
+}
+
+inline void Write(uint8_t i2c_address, uint16_t addr, const uint8_t* data, size_t length) {
+  Write(Wire, i2c_address, addr, data, length);
 }
 
 /**
@@ -73,6 +81,11 @@ inline T Read(TwoWire& wire, uint8_t i2c_address, uint16_t addr) {
   return value;
 }
 
+template <typename T>
+inline T Read(uint8_t i2c_address, uint16_t addr) {
+  return Read<T>(Wire, i2c_address, addr);
+}
+
 /**
  * @brief Writes a value of type T to the I2C device at the specified register/memory address.
  *
@@ -80,11 +93,18 @@ inline T Read(TwoWire& wire, uint8_t i2c_address, uint16_t addr) {
  * @param wire The TwoWire instance.
  * @param i2c_address The 7-bit I2C device address.
  * @param addr The register/memory address to write to.
- * @param value The value to write.
+ * @param value The value to write. Passed by value so that `static constexpr`
+ *              members and other constants are accepted without ODR-use
+ *              (they must not be required to have an out-of-line definition).
  */
 template <typename T>
-inline void Write(TwoWire& wire, uint8_t i2c_address, uint16_t addr, T& value) {
-  Write(wire, i2c_address, addr, reinterpret_cast<uint8_t*>(&value), sizeof(T));
+inline void Write(TwoWire& wire, uint8_t i2c_address, uint16_t addr, T value) {
+  Write(wire, i2c_address, addr, reinterpret_cast<const uint8_t*>(&value), sizeof(T));
+}
+
+template <typename T>
+inline void Write(uint8_t i2c_address, uint16_t addr, T value) {
+  Write(Wire, i2c_address, addr, reinterpret_cast<const uint8_t*>(&value), sizeof(T));
 }
 }  // namespace wide
 }  // namespace i2c
