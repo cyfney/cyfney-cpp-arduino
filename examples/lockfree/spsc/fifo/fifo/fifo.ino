@@ -7,7 +7,7 @@
 // the API from one task; for a two-core concurrency stress test see the
 // fifo_sync example.
 
-#include "cyf.h"
+#include "cyf.h"  // Triggers Arduino IDE to locate cyfney-cpp and add src/ to include path, making "cyf/xxx.h" includes below resolvable
 #include "cyf/lockfree/spsc/fifo.h"
 #include "cyf/log.h"
 
